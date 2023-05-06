@@ -1,8 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <string name="app_name">VK File Manager Application</string>
-    <string name="files">Files</string>
-    <string name="home">Home</string>
-    <string name="external_storage">External Storage</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="storage_persmission">Разрешение не предоставлено</string>
+    <string name="path">/Путь</string>
+    <string name="file_name_png">File_Name.png</string>
+    <string name="sizeFile">%1$d file(s)</string>
 </resources>
