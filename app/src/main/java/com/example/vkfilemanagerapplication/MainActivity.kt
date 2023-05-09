@@ -3,9 +3,11 @@ package com.example.vkfilemanagerapplication
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.example.vkfilemanagerapplication.databinding.ActivityMainBinding
 
@@ -18,7 +20,7 @@ class MainActivity : AppCompatActivity() {
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (!isGranted) {
-                Toast.makeText(this, "Пожалуйста, предоставьте разрешение!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Пожалуйста, предоставьте разрешение!", Toast.LENGTH_LONG).show()
             }
         }
 
@@ -28,13 +30,8 @@ class MainActivity : AppCompatActivity() {
         if(!checkPermission())
         {
             requestPermission()
-        }
-
-        if(!checkPermission())
-        {
-            replaceFragment(RequestPermissionFragment())
         } else {
-            replaceFragment(StorageFragment())
+           replaceFragment(StorageFragment())
         }
         setContentView(binding.root)
     }
@@ -58,6 +55,5 @@ class MainActivity : AppCompatActivity() {
     private fun requestPermission(){
         requestPermissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
     }
-
 
 }

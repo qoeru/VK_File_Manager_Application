@@ -5,21 +5,52 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".StorageFragment"
-    android:orientation="vertical"
-    android:layout_margin="14dp">
-
+    android:orientation="vertical">
 
     <TextView
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="5dp"
         android:id="@+id/path"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/path"
         android:textAlignment="center"
-        android:textSize="16sp"
-        android:textColor="@color/space_cadet"
+        android:textSize="18sp"
+        android:textColor="@color/white"
         app:drawableStartCompat="@drawable/ic_round_source_24"
-        app:drawableTint="@color/space_cadet">
+        app:drawableTint="@color/white"
+        android:background="@color/space_cadet">
     </TextView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/space_cadet">
+
+        <ImageButton
+            android:src="@drawable/ic_round_sort_24"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentStart="true"
+            android:background="@null"
+            app:tint="@color/white"
+            android:contentDescription="@string/sort">
+
+        </ImageButton>
+
+        <ImageButton
+            android:id="@+id/delete_button"
+            android:src="@drawable/ic_round_delete_24"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@null"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@string/delete_button"
+            app:tint="@color/white"
+            android:visibility="invisible" />
+
+    </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/files_and_folders"

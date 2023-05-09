@@ -6,4 +6,7 @@
     <string name="path">/Путь</string>
     <string name="file_name_png">File_Name.png</string>
     <string name="sizeFile">%1$d file(s)</string>
+    <string name="delete_button">Delete Button</string>
+    <string name="sort">Sort</string>
+    <string name="checked">Checked</string>
 </resources>
