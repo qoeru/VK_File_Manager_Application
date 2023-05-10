@@ -1,9 +1,9 @@
 package com.example.vkfilemanagerapplication
 
-import android.app.AlertDialog
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Environment
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -11,15 +11,14 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.PopupMenu
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.io.File
+import java.io.FileInputStream
 import java.io.IOException
-import java.nio.file.Paths
-import java.nio.file.attribute.BasicFileAttributes
-import java.util.Arrays
-import java.util.function.Function
+import java.security.MessageDigest
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -32,25 +31,29 @@ private const val ARG_PARAM2 = "param2"
  * Use the [StorageFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class StorageFragment : Fragment(), OnFileClickedListener {
+class StorageFragment() : Fragment(), OnFileClickedListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-
 
     private lateinit var filesAndFolders: RecyclerView
     private lateinit var fileList: ArrayList<File>
     private lateinit var thePath: TextView
     private lateinit var storage: File
     private lateinit var data: String
-    private lateinit var trashCan: ImageButton
     private lateinit var adapter: FileAdapter
-
     private lateinit var sortButton: ImageButton
     private lateinit var reverseSort: ImageButton
+    private lateinit var lastUpdatedFilesButton: ImageButton
+    private lateinit var lastUpdatedFilesReturnButton: ImageButton
 
-    private var listOfSelectedFiles = mutableListOf<File>()
     private var descending = true
+    private var changedFiles = arrayListOf<File>()
+
+    fun setChangedFiles(files: ArrayList<File>)
+    {
+        changedFiles = files
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,9 +76,10 @@ class StorageFragment : Fragment(), OnFileClickedListener {
         super.onViewCreated(view, savedInstanceState)
 
         thePath = view.findViewById(R.id.path)
-        trashCan = view.findViewById(R.id.delete_button)
         reverseSort = view.findViewById(R.id.reverse_sort)
         sortButton = view.findViewById(R.id.sort_button)
+        lastUpdatedFilesButton = view.findViewById(R.id.last_updated_files)
+        lastUpdatedFilesReturnButton = view.findViewById(R.id.back)
 
         val internalPath = Environment.getExternalStorageDirectory().absolutePath
         storage = File(internalPath)
@@ -92,12 +96,9 @@ class StorageFragment : Fragment(), OnFileClickedListener {
 
         filesAndFolders = view.findViewById(R.id.files_and_folders)
         fileList = findFiles(storage)
+        val fileListCopy = fileList
 
         fileList.sort()
-
-        trashCan.setOnClickListener {
-            onTrashCanShortClicked()
-        }
 
         reverseSort.setOnClickListener {
             onReverseSortClicked()
@@ -111,6 +112,18 @@ class StorageFragment : Fragment(), OnFileClickedListener {
 
         sortButton.setOnClickListener {
             onSortClicked(popupMenu)
+        }
+
+        lastUpdatedFilesButton.setOnClickListener {
+            lastUpdatedFilesReturnButton.isVisible = true
+            fileList = changedFiles
+            adapter.notifyDataSetChanged()
+        }
+
+        lastUpdatedFilesReturnButton.setOnClickListener {
+            lastUpdatedFilesReturnButton.isVisible = false
+            fileList = fileListCopy
+            adapter.notifyDataSetChanged()
         }
 
         adapter = FileAdapter(requireContext(), fileList, this)
@@ -140,7 +153,6 @@ class StorageFragment : Fragment(), OnFileClickedListener {
             }
     }
 
-
     private fun findFiles(file: File): ArrayList<File>
     {
         file.setReadable(true)
@@ -158,6 +170,8 @@ class StorageFragment : Fragment(), OnFileClickedListener {
     {
         fileList.reverse()
     }
+
+
 
     override fun onFileShortClicked(file: File) {
         if(file.isDirectory)
@@ -243,33 +257,6 @@ class StorageFragment : Fragment(), OnFileClickedListener {
         sortReverseOrder()
     }
 
-//    override fun onFileLongClicked(show: Boolean) {
-//        showTrashCan(show)
-//
-//    }
 
-    override fun onTrashCanShortClicked() {
-        showDeleteAlertDialogue()
-    }
-
-//    private fun showTrashCan(show: Boolean)
-//    {
-//        trashCan.isVisible = show
-//    }
-
-    private fun showDeleteAlertDialogue()
-    {
-        val alertDialog = AlertDialog.Builder(context)
-        alertDialog.setTitle("Удаление")
-        alertDialog.setMessage("Вы уверены?")
-        alertDialog.setPositiveButton("Удалить") { _,_ ->
-            for(file in listOfSelectedFiles)
-            {
-                file.delete()
-            }
-        }
-        alertDialog.setNegativeButton("Отмена") {_,_ -> }
-        alertDialog.show()
-    }
 
 }

@@ -15,4 +15,6 @@
     <string name="name_sort">Имя</string>
     <string name="ascending">Ascending</string>
     <string name="descending">Descending</string>
+    <string name="last_updated_file_list">updated files</string>
+    <string name="last_updated_file">last updated file</string>
 </resources>

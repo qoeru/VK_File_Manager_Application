@@ -52,13 +52,23 @@
         </ImageButton>
 
         <ImageButton
-            android:id="@+id/delete_button"
-            android:src="@drawable/ic_round_delete_24"
+            android:id="@+id/last_updated_files"
+            android:src="@drawable/ic_round_update_24"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:background="@null"
             android:layout_alignParentEnd="true"
-            android:contentDescription="@string/delete_button"
+            android:contentDescription="@string/last_updated_file"
+            app:tint="@color/white"
+            android:visibility="visible" />
+        <ImageButton
+            android:id="@+id/back"
+            android:src="@drawable/ic_round_arrow_back_ios_24"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@null"
+            android:layout_toStartOf="@id/last_updated_files"
+            android:contentDescription="@string/last_updated_file"
             app:tint="@color/white"
             android:visibility="invisible" />
 
