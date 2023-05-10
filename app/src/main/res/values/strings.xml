@@ -9,4 +9,10 @@
     <string name="delete_button">Delete Button</string>
     <string name="sort">Sort</string>
     <string name="checked">Checked</string>
+    <string name="date_created">Date created</string>
+    <string name="extensions_sort">Расширение</string>
+    <string name="date_created_sort">Дата Создания</string>
+    <string name="name_sort">Имя</string>
+    <string name="ascending">Ascending</string>
+    <string name="descending">Descending</string>
 </resources>

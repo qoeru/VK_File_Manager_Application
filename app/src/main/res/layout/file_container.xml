@@ -3,10 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="15dp"
-    android:showDividers="middle"
+    android:layout_margin="15dp"
     >
-
 
     <TextView
         android:id="@+id/file_name"
@@ -19,22 +17,37 @@
         android:textColor="@color/space_cadet"
         android:drawablePadding="10dp"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:drawableStartCompat="@drawable/ic_round_folder_24"
         app:drawableTint="@color/space_cadet">
 
     </TextView>
 
-    <TextView
-        android:id="@+id/size"
-        android:paddingHorizontal="20dp"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAlignment="viewEnd"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:text="@string/sizeFile"
         app:layout_constraintTop_toTopOf="@id/file_name"
-        android:elegantTextHeight="true" />
+        app:layout_constraintBottom_toBottomOf="@id/file_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/size"
+            android:paddingHorizontal="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="viewEnd"
+            android:text="@string/sizeFile" />
+        <TextView
+            android:id="@+id/date_created"
+            android:paddingHorizontal="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="viewEnd"
+            android:text="@string/date_created" />
+    </LinearLayout>
+
+
     <ImageView
         android:id="@+id/checked"
         android:layout_width="wrap_content"

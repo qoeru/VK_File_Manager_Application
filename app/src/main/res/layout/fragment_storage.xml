@@ -29,6 +29,7 @@
         android:background="@color/space_cadet">
 
         <ImageButton
+            android:id="@+id/sort_button"
             android:src="@drawable/ic_round_sort_24"
             android:layout_width="50dp"
             android:layout_height="50dp"
@@ -37,6 +38,17 @@
             app:tint="@color/white"
             android:contentDescription="@string/sort">
 
+        </ImageButton>
+
+        <ImageButton
+            android:id="@+id/reverse_sort"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_toEndOf="@id/sort_button"
+            android:background="@null"
+            android:src="@drawable/ic_round_arrow_circle_down_24"
+            app:tint="@color/white"
+            android:contentDescription="@string/descending">
         </ImageButton>
 
         <ImageButton
@@ -51,13 +63,17 @@
             android:visibility="invisible" />
 
     </RelativeLayout>
+    <View
+        android:id="@+id/menu_space"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+    />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/files_and_folders"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:scrollbars="vertical"
-        android:visibility="visible"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         >
 

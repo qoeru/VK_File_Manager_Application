@@ -3,18 +3,24 @@ package com.example.vkfilemanagerapplication
 import android.app.AlertDialog
 import android.os.Bundle
 import android.os.Environment
-import androidx.fragment.app.Fragment
+import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.PopupMenu
 import android.widget.TextView
-import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.io.File
 import java.io.IOException
-import java.lang.Exception
+import java.nio.file.Paths
+import java.nio.file.attribute.BasicFileAttributes
+import java.util.Arrays
+import java.util.function.Function
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -38,7 +44,13 @@ class StorageFragment : Fragment(), OnFileClickedListener {
     private lateinit var storage: File
     private lateinit var data: String
     private lateinit var trashCan: ImageButton
+    private lateinit var adapter: FileAdapter
+
+    private lateinit var sortButton: ImageButton
+    private lateinit var reverseSort: ImageButton
+
     private var listOfSelectedFiles = mutableListOf<File>()
+    private var descending = true
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,14 +74,15 @@ class StorageFragment : Fragment(), OnFileClickedListener {
 
         thePath = view.findViewById(R.id.path)
         trashCan = view.findViewById(R.id.delete_button)
+        reverseSort = view.findViewById(R.id.reverse_sort)
+        sortButton = view.findViewById(R.id.sort_button)
 
         val internalPath = Environment.getExternalStorageDirectory().absolutePath
         storage = File(internalPath)
 
         try {
             data = requireArguments().getString("path").toString()
-            val file = File(data)
-            storage = file
+            storage = File(data)
         } catch (e: Exception)
         {
             e.printStackTrace()
@@ -80,12 +93,31 @@ class StorageFragment : Fragment(), OnFileClickedListener {
         filesAndFolders = view.findViewById(R.id.files_and_folders)
         fileList = findFiles(storage)
 
-        filesAndFolders.adapter = FileAdapter(requireContext(), fileList, this)
-        filesAndFolders.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        fileList.sort()
 
         trashCan.setOnClickListener {
             onTrashCanShortClicked()
         }
+
+        reverseSort.setOnClickListener {
+            onReverseSortClicked()
+            adapter.notifyDataSetChanged()
+        }
+
+        val popUpView = view.findViewById<View>(R.id.menu_space)
+
+        val popupMenu = PopupMenu(context, popUpView)
+        popupMenu.menuInflater.inflate(R.menu.menu_popup, popupMenu.menu)
+
+        sortButton.setOnClickListener {
+            onSortClicked(popupMenu)
+        }
+
+        adapter = FileAdapter(requireContext(), fileList, this)
+
+        filesAndFolders.adapter = adapter
+        filesAndFolders.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+
     }
 
     companion object {
@@ -113,34 +145,18 @@ class StorageFragment : Fragment(), OnFileClickedListener {
     {
         file.setReadable(true)
         val arrayList = ArrayList<File>()
-        val files = file.listFiles()
-        for(currentFile in files!!)
-        {
-            if(currentFile.isDirectory and !currentFile.isHidden)
-            {
+        val files = file.listFiles()!!
+        for(currentFile in files) {
+            if (!currentFile.isHidden) {
                 arrayList.add(currentFile)
             }
         }
-
-        val allowedFormats = arrayListOf(".png", ".jpg", ".jpeg",
-            ".mp4", ".pdf", ".mp3", ".wav", ".doc",
-            ".md", ".epub", ".apk", ".txt")
-
-        for(currentFile in files)
-        {
-            val currentFileName = currentFile.name.lowercase()
-
-            for(format in allowedFormats)
-            {
-                if (currentFileName.endsWith(format))
-                {
-                    arrayList.add(currentFile)
-                }
-
-            }
-
-        }
         return arrayList
+    }
+
+    private fun sortReverseOrder()
+    {
+        fileList.reverse()
     }
 
     override fun onFileShortClicked(file: File) {
@@ -164,6 +180,69 @@ class StorageFragment : Fragment(), OnFileClickedListener {
         }
     }
 
+    private fun onSortClicked(popupMenu: PopupMenu)
+    {
+        popupMenu.setOnMenuItemClickListener {
+            onPopUpMenuItemClicked(it)
+        }
+        popupMenu.show()
+    }
+
+    private fun onPopUpMenuItemClicked(item: MenuItem): Boolean
+    {
+        when(item.itemId)
+        {
+            R.id.date_created_sort -> {
+                sortByDate()
+                adapter.notifyDataSetChanged()
+                return true
+            }
+            R.id.name_sort -> {
+                sortByName()
+                adapter.notifyDataSetChanged()
+                return true
+            }
+            R.id.extension_sort -> {
+                sortByFileType()
+                adapter.notifyDataSetChanged()
+                return true
+            }
+            else -> return false
+        }
+    }
+
+    private fun sortByFileType() {
+        reverseSort.setImageResource(R.drawable.ic_round_arrow_circle_down_24)
+        descending = true
+        fileList.sortWith(compareBy { it.extension } )
+
+    }
+
+    private fun sortByName() {
+        reverseSort.setImageResource(R.drawable.ic_round_arrow_circle_down_24)
+        descending = true
+        fileList.sort()
+    }
+
+    private fun sortByDate()
+    {
+        reverseSort.setImageResource(R.drawable.ic_round_arrow_circle_down_24)
+        descending = true
+        fileList.sortWith(compareBy { it.lastModified() } )
+    }
+
+
+    private fun onReverseSortClicked() {
+        descending = if (descending) {
+            reverseSort.setImageResource(R.drawable.ic_round_arrow_circle_up_24)
+            false
+        } else {
+            reverseSort.setImageResource(R.drawable.ic_round_arrow_circle_down_24)
+            true
+        }
+        sortReverseOrder()
+    }
+
 //    override fun onFileLongClicked(show: Boolean) {
 //        showTrashCan(show)
 //
@@ -173,10 +252,10 @@ class StorageFragment : Fragment(), OnFileClickedListener {
         showDeleteAlertDialogue()
     }
 
-    private fun showTrashCan(show: Boolean)
-    {
-        trashCan.isVisible = show
-    }
+//    private fun showTrashCan(show: Boolean)
+//    {
+//        trashCan.isVisible = show
+//    }
 
     private fun showDeleteAlertDialogue()
     {

@@ -10,7 +10,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import org.w3c.dom.Text
 import java.io.File
+import java.text.DateFormat
+import java.util.Date
 
 class FileAdapter(
     private var context: Context,
@@ -32,34 +35,37 @@ class FileAdapter(
 
     override fun onBindViewHolder(holder: FileContainer, position: Int) {
         holder.fileName.text = files[position].name
+        val date = Date(files[position].lastModified())
+        holder.dateCreated.text = DateFormat.getDateInstance(DateFormat.SHORT).format(date)
         holder.fileName.isSelected = true
-                    var items = 0
 
-                    if(files[position].isDirectory) {
-                        val currentFilesInDirectory = files[position].listFiles()
-                        for (currentFile in currentFilesInDirectory!!) {
-                            if (!currentFile.isHidden) {
+        var items = 0
+
+        if(files[position].isDirectory) {
+            val currentFilesInDirectory = files[position].listFiles()
+            for (currentFile in currentFilesInDirectory!!) {
+                if (!currentFile.isHidden) {
                     items++
                 }
             }
-            holder.fileSize.text = context.getString(R.string.sizeFile, items)
+        holder.fileSize.text = context.getString(R.string.sizeFile, items)
         } else {
             holder.fileSize.text = Formatter.formatShortFileSize(context, files[position].length())
         }
 
-        val mapOfFormats = mutableMapOf(".png" to R.drawable.ic_round_picture_24,
-            ".jpg" to R.drawable.ic_round_picture_24,
-            ".jpeg" to R.drawable.ic_round_picture_24,
-            ".pdf" to R.drawable.ic_round_pdf_24,
-            ".mp4" to R.drawable.ic_round_video_file_24,
-            ".txt" to R.drawable.ic_round_text_24,
-            ".wav" to R.drawable.ic_round_library_music_24,
-            ".mp3" to R.drawable.ic_round_library_music_24)
+        val mapOfFormats = mutableMapOf("png" to R.drawable.ic_round_picture_24,
+            "jpg" to R.drawable.ic_round_picture_24,
+            "jpeg" to R.drawable.ic_round_picture_24,
+            "pdf" to R.drawable.ic_round_pdf_24,
+            "mp4" to R.drawable.ic_round_video_file_24,
+            "txt" to R.drawable.ic_round_text_24,
+            "wav" to R.drawable.ic_round_library_music_24,
+            "mp3" to R.drawable.ic_round_library_music_24)
 
         var formatFound = false
 
         mapOfFormats.forEach{format ->
-            if(files[position].name.lowercase().endsWith(format.key)) {
+            if(files[position].extension == format.key) {
                 holder.fileName.setCompoundDrawablesRelativeWithIntrinsicBounds(
                     format.value,
                     0,
@@ -132,6 +138,7 @@ class FileAdapter(
     }
 
     class FileContainer(itemView: View) : RecyclerView.ViewHolder(itemView){
+        val dateCreated: TextView = itemView.findViewById(R.id.date_created)
         val checked: ImageView = itemView.findViewById(R.id.checked)
         val fileName: TextView = itemView.findViewById(R.id.file_name)
         val fileSize: TextView = itemView.findViewById(R.id.size)
